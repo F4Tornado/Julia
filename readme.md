@@ -1,3 +1,5 @@
+https://f4tornado.github.io/Julia?iterator=mandelbrot&maxnum=25&control=false
+
 # What is it
 
 This thing generates Mandelbrot and Julia sets
@@ -11,3 +13,7 @@ The mouse controls the mandelbrot set by changing the start location. In the fam
 # How do I use it?
 
 In the URL, you can change the parameters. You can change iterator to either mandelbrot or julia. Maxnum is the maximum amount of iterations it will do before giving up and saying the number is stable. The higher this is, the slower it will run. Control is whether you can control the set or not. If not, the set will animate in the beginning. Otherwise, the mouse will control the set.
+
+If you have control set to true, you can click to change whether you can change the fractal or not, making it easier to zoom.
+
+To zoom, scroll. You will always scroll to where the mouse pointer is located. Right click to reset the view.

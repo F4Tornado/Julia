@@ -8,13 +8,17 @@ function getUrlVars() {
 }
 
 const params = getUrlVars();
+let moving = true;
 
 const c = document.getElementById("c");
 draw = c.getContext("2d");
 
 c.width = window.innerWidth;
 c.height = window.innerHeight;
-frames = 0;
+let targetZoom = 1;
+let zoom = 1;
+let targetZoomLocation = [0, 0];
+let zoomLocation = [0, 0];
 
 let numToAdd = [-4, -2];
 let target = [0, 0];
@@ -35,10 +39,9 @@ function coordsToI(x, y) {
 }
 
 function show() {
-  frames++;
   for (let i = 0; i < pixels.length / 4; i++) {
     let pos = iToCoords(i)
-    let color = getColor(iterator((pos[0] - c.width / 2) / 256, (pos[1] - c.height / 2) / 256))
+    let color = getColor(iterator(((pos[0] - c.width / 2) / (256 * zoom) + zoomLocation[0]), ((pos[1] - c.height / 2) / (256 * zoom) + zoomLocation[1])));
     pixels[i * 4 + 0] = color;
     pixels[i * 4 + 1] = color;
     pixels[i * 4 + 2] = color;
@@ -49,17 +52,37 @@ function show() {
 }
 
 c.onmousemove = (e) => {
-  if (control) {
-    numToAdd = [(e.clientX - c.width / 2) / 256, (e.clientY - c.height / 2) / 256];
+  if (control && moving) {
+    numToAdd = [((e.clientX - c.width / 2) / (256 * zoom) + zoomLocation[0]), ((e.clientY - c.height / 2 + zoomLocation[1]) / (256 * zoom) + zoomLocation[1])];
     show();
   }
+}
+
+c.onclick = (e) => {
+  moving = !moving;
+}
+
+c.oncontextmenu = () => {
+  targetZoom = 1;
+  targetZoomLocation = [0, 0];
+  return false;
+}
+
+c.onwheel = (e) => {
+  targetZoom *= e.deltaY < 0 ? 1.5 : (1 / 1.5);
+  targetZoomLocation = [((e.clientX - c.width / 2) / (256 * zoom) + zoomLocation[0]), ((e.clientY - c.height / 2 + zoomLocation[1]) / (256 * zoom) + zoomLocation[1])];
 }
 
 function drawLoop() {
   setTimeout(drawLoop, 1000 / 30);
   show();
-  numToAdd[0] -= (numToAdd[0] - target[0]) * 0.1;
-  numToAdd[1] -= (numToAdd[1] - target[1]) * 0.1;
+  if (!control) {
+    numToAdd[0] -= (numToAdd[0] - target[0]) * 0.1;
+    numToAdd[1] -= (numToAdd[1] - target[1]) * 0.1;
+  }
+  zoomLocation[0] -= (zoomLocation[0] - targetZoomLocation[0]) * 0.2;
+  zoomLocation[1] -= (zoomLocation[1] - targetZoomLocation[1]) * 0.2;
+  zoom -= (zoom - targetZoom) * 0.2;
 }
 
 c.onmousedown = show;
@@ -102,8 +125,4 @@ function getColor(num) {
   return 255 * (num / (maxNum + 1));
 }
 
-if (control) {
-  show();
-} else {
-  drawLoop();
-}
+drawLoop();
