@@ -63,8 +63,8 @@ c.onclick = (e) => {
 }
 
 c.oncontextmenu = () => {
-  targetZoom = 1;
-  targetZoomLocation = [0, 0];
+  zoom = 1;
+  zoomLocation = [0, 0];
   return false;
 }
 
