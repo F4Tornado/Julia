@@ -120,7 +120,42 @@ const iterators = {
     }
 
     return (num < 2 ? 2 : num) - 2;
-  }
+  },
+
+  julia3: (xa, ya) => {
+    let x = xa;
+    let y = ya;
+    let num = 0;
+    while (!(x > 2 || y > 2 || x < -2 || y < -2 || num > maxNum)) {
+      x1 = (x ** 2 - y ** 2);
+      y1 = (2 * x * y);
+      let temp = [(x1 * x - y1 * y) + numToAdd[0], (x1 * y + y1 * x) + numToAdd[1]];
+      // let temp = [(x ** 2 - y ** 2) + numToAdd[0], (2 * x * y) + numToAdd[1]];
+      x = temp[0];
+      y = temp[1];
+      num++;
+    }
+
+    return (num == 0 ? 1 : num) - 1;
+  },
+
+  mandelbrot3: (xb, yb) => {
+    let x = numToAdd[0];
+    let y = numToAdd[1];
+    let xa = xb;
+    let ya = yb;
+    let num = 0;
+    while (!(x > 3 || y > 2 || x < -3 || y < -2 || num > maxNum)) {
+      x1 = (x ** 2 - y ** 2);
+      y1 = (2 * x * y);
+      let temp = [(x1 * x - y1 * y) + xa, (x1 * y + y1 * x) + ya];
+      x = temp[0];
+      y = temp[1];
+      num++;
+    }
+
+    return (num < 2 ? 2 : num) - 2;
+  },
 }
 
 const iterator = iterators[params["iterator"]];

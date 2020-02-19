@@ -12,7 +12,7 @@ The mouse controls the mandelbrot set by changing the start location. In the fam
 
 # How do I use it?
 
-In the URL, you can change the parameters. You can change iterator to either mandelbrot or julia. Maxnum is the maximum amount of iterations it will do before giving up and saying the number is stable. The higher this is, the slower it will run. Control is whether you can control the set or not. If not, the set will animate in the beginning. Otherwise, the mouse will control the set.
+In the URL, you can change the parameters. You can change iterator to mandelbrot (regular mandelbrot set), julia (regular julia set), mandelbrot3 (cubes numbers instead of squaring them), or julia3 (cubes numbers instead of squaring them). Maxnum is the maximum amount of iterations it will do before giving up and saying the number is stable. The higher this is, the slower it will run. Control is whether you can control the set or not. If not, the set will animate in the beginning. Otherwise, the mouse will control the set.
 
 If you have control set to true, you can click to change whether you can change the fractal or not, making it easier to zoom.
 
