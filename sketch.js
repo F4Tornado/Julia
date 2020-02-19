@@ -69,8 +69,12 @@ c.oncontextmenu = () => {
 }
 
 c.onwheel = (e) => {
-  targetZoom *= e.deltaY < 0 ? 1.5 : (1 / 1.5);
-  targetZoomLocation = [((e.clientX - c.width / 2) / (256 * zoom) + zoomLocation[0]), ((e.clientY - c.height / 2 + zoomLocation[1]) / (256 * zoom) + zoomLocation[1])];
+  let div = navigator.appVersion.indexOf("Mac") !== -1 ? -12 : 2; // Macs do this weird thing where they scroll really big and a lot of times
+  // console.log(e.deltaY / div < 0 ? (e.deltaY / div) / 6 + 1 : 1 / ((-e.deltaY / div) / 6 + 1));
+  let zoomAmt = e.deltaY / div < 0 ? (e.deltaY / div) / 6 + 1 : 1 / ((-e.deltaY / div) / 6 + 1)
+  zoomLocation[0] += (((e.clientX - c.width / 2) / (256 * zoom) + zoomLocation[0]) - zoomLocation[0]) * (zoomAmt - 1);
+  zoomLocation[1] += (((e.clientY - c.height / 2) / (256 * zoom) + zoomLocation[1]) - zoomLocation[1]) * (zoomAmt - 1);
+  zoom *= zoomAmt;
 }
 
 function drawLoop() {
@@ -80,9 +84,9 @@ function drawLoop() {
     numToAdd[0] -= (numToAdd[0] - target[0]) * 0.1;
     numToAdd[1] -= (numToAdd[1] - target[1]) * 0.1;
   }
-  zoomLocation[0] -= (zoomLocation[0] - targetZoomLocation[0]) * 0.2;
-  zoomLocation[1] -= (zoomLocation[1] - targetZoomLocation[1]) * 0.2;
-  zoom -= (zoom - targetZoom) * 0.2;
+  // zoomLocation[0] -= (zoomLocation[0] - targetZoomLocation[0]) * 0.2;
+  // zoomLocation[1] -= (zoomLocation[1] - targetZoomLocation[1]) * 0.2;
+  // zoom -= (zoom - targetZoom) * 0.2;
 }
 
 c.onmousedown = show;
