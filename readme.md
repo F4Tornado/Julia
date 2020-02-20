@@ -17,3 +17,5 @@ In the URL, you can change the parameters. You can change iterator to mandelbrot
 If you have control set to true, you can click to change whether you can change the fractal or not, making it easier to zoom.
 
 To zoom, scroll. You will always scroll to where the mouse pointer is located. Right click to reset the view.
+
+When you zoom, the URL will change, which you can copy/paste and it will lock to the location you were zooming to. If you want to copy it so it won't do that, delete the x, y, addx, and addy parameters.

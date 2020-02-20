@@ -7,6 +7,16 @@ function getUrlVars() {
   return vars;
 }
 
+//https://www.aspsnippets.com/Articles/Change-Browser-URL-without-reloading-refreshing-page-using-HTML5-in-JavaScript-and-jQuery.aspx
+function changeUrl(title, url) {
+  if (typeof (history.pushState) != "undefined") {
+    var obj = { Title: title, Url: url };
+    history.pushState(obj, obj.Title, obj.Url);
+  } else {
+    alert("Browser does not support HTML5.");
+  }
+}
+
 const params = getUrlVars();
 let moving = true;
 
@@ -17,6 +27,10 @@ c.width = window.innerWidth;
 c.height = window.innerHeight;
 let targetZoom = 1;
 let zoom = 1;
+let x = parseFloat(params["x"]);
+let y = parseFloat(params["y"]);
+let addx = parseFloat(params["addx"]);
+let addy = parseFloat(params["addy"]);
 let targetZoomLocation = [0, 0];
 let zoomLocation = [0, 0];
 
@@ -26,6 +40,12 @@ let maxNum = parseInt(params["maxnum"]);
 let t = 0;
 let pt = 0;
 let control = params["control"] == "true" ? true : false;
+let predefined = !(isNaN(x) && isNaN(y) && isNaN(addx) && isNaN(addy))
+if (predefined) {
+  control = false;
+  target = [addx, addy];
+  zoomLocation = [x, y];
+}
 
 let image = draw.createImageData(c.clientWidth, c.height);
 let pixels = image.data;
@@ -64,16 +84,21 @@ c.onclick = (e) => {
 
 c.oncontextmenu = () => {
   zoom = 1;
-  zoomLocation = [0, 0];
+  if (!predefined) {
+    zoomLocation = [0, 0];
+  }
   return false;
 }
 
 c.onwheel = (e) => {
   let div = navigator.appVersion.indexOf("Mac") !== -1 ? -12 : 2; // Macs do this weird thing where they scroll really big and a lot of times
   // console.log(e.deltaY / div < 0 ? (e.deltaY / div) / 6 + 1 : 1 / ((-e.deltaY / div) / 6 + 1));
-  let zoomAmt = e.deltaY / div < 0 ? (e.deltaY / div) / 6 + 1 : 1 / ((-e.deltaY / div) / 6 + 1)
-  zoomLocation[0] += (((e.clientX - c.width / 2) / (256 * zoom) + zoomLocation[0]) - zoomLocation[0]) * (zoomAmt - 1);
-  zoomLocation[1] += (((e.clientY - c.height / 2) / (256 * zoom) + zoomLocation[1]) - zoomLocation[1]) * (zoomAmt - 1);
+  let zoomAmt = e.deltaY / div < 0 ? (e.deltaY / div) / 6 + 1 : 1 / ((-e.deltaY / div) / 6 + 1);
+  if (!predefined) {
+    zoomLocation[0] += (((e.clientX - c.width / 2) / (256 * zoom) + zoomLocation[0]) - zoomLocation[0]) * (zoomAmt - 1);
+    zoomLocation[1] += (((e.clientY - c.height / 2) / (256 * zoom) + zoomLocation[1]) - zoomLocation[1]) * (zoomAmt - 1);
+    changeUrl("Julia sets & stuff", `${location.origin == "null" ? location.host : location.origin}${location.pathname}?iterator=${params["iterator"]}&maxnum=${params["maxnum"]}&control=false&addx=${numToAdd[0]}&addy=${numToAdd[1]}&x=${zoomLocation[0]}&y=${zoomLocation[1]}`);
+  }
   zoom *= zoomAmt;
 }
 
