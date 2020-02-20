@@ -78,7 +78,7 @@ c.onmousemove = (e) => {
   mouseX = e.clientX;
   mouseY = e.clientY;
   if (control && moving) {
-    numToAdd = [((mouseX - c.width / 2) / (256 * zoom) + zoomLocation[0]), ((mnouseY - c.height / 2 + zoomLocation[1]) / (256 * zoom) + zoomLocation[1])];
+    numToAdd = [((mouseX - c.width / 2) / (256 * zoom) + zoomLocation[0]), ((mouseY - c.height / 2 + zoomLocation[1]) / (256 * zoom) + zoomLocation[1])];
     show();
   }
 }
