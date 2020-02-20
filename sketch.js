@@ -31,6 +31,9 @@ let x = parseFloat(params["x"]);
 let y = parseFloat(params["y"]);
 let addx = parseFloat(params["addx"]);
 let addy = parseFloat(params["addy"]);
+let mouseX = 0;
+let mouseY = 0;
+let autozoom = params["autozoom"] ? parseFloat(params["autozoom"]) : false;
 let targetZoomLocation = [0, 0];
 let zoomLocation = [0, 0];
 
@@ -39,7 +42,7 @@ let target = [0, 0];
 let maxNum = parseInt(params["maxnum"]);
 let t = 0;
 let pt = 0;
-let control = params["control"] == "true" ? true : false;
+let control = params["control"] == "true";
 let predefined = !(isNaN(x) && isNaN(y) && isNaN(addx) && isNaN(addy))
 if (predefined) {
   control = false;
@@ -72,8 +75,10 @@ function show() {
 }
 
 c.onmousemove = (e) => {
+  mouseX = e.clientX;
+  mouseY = e.clientY;
   if (control && moving) {
-    numToAdd = [((e.clientX - c.width / 2) / (256 * zoom) + zoomLocation[0]), ((e.clientY - c.height / 2 + zoomLocation[1]) / (256 * zoom) + zoomLocation[1])];
+    numToAdd = [((mouseX - c.width / 2) / (256 * zoom) + zoomLocation[0]), ((mnouseY - c.height / 2 + zoomLocation[1]) / (256 * zoom) + zoomLocation[1])];
     show();
   }
 }
@@ -91,13 +96,19 @@ c.oncontextmenu = () => {
 }
 
 c.onwheel = (e) => {
-  let div = navigator.appVersion.indexOf("Mac") !== -1 ? -12 : 2; // Macs do this weird thing where they scroll really big and a lot of times
+  if (!(autozoom && moving)) {
+    zoomy(e);
+  }
+};
+
+function zoomy(e) {
+  let div = navigator.appVersion.indexOf("Mac") !== -1 && !autozoom ? -12 : 2; // Macs do this weird thing where they scroll really big and a lot of times
   // console.log(e.deltaY / div < 0 ? (e.deltaY / div) / 6 + 1 : 1 / ((-e.deltaY / div) / 6 + 1));
   let zoomAmt = e.deltaY / div < 0 ? (e.deltaY / div) / 6 + 1 : 1 / ((-e.deltaY / div) / 6 + 1);
   if (!predefined) {
     zoomLocation[0] += (((e.clientX - c.width / 2) / (256 * zoom) + zoomLocation[0]) - zoomLocation[0]) * (zoomAmt - 1);
     zoomLocation[1] += (((e.clientY - c.height / 2) / (256 * zoom) + zoomLocation[1]) - zoomLocation[1]) * (zoomAmt - 1);
-    changeUrl("Julia sets & stuff", `${location.origin == "null" ? location.host : location.origin}${location.pathname}?iterator=${params["iterator"]}&maxnum=${params["maxnum"]}&control=false&addx=${numToAdd[0]}&addy=${numToAdd[1]}&x=${zoomLocation[0]}&y=${zoomLocation[1]}`);
+    changeUrl("Julia sets & stuff", `${location.origin == "null" ? location.host : location.origin}${location.pathname}?iterator=${params["iterator"]}&maxnum=${params["maxnum"]}&control=false&addx=${numToAdd[0]}&addy=${numToAdd[1]}&x=${zoomLocation[0]}&y=${zoomLocation[1]}&autozoom=0.25`);
   }
   zoom *= zoomAmt;
 }
@@ -105,6 +116,9 @@ c.onwheel = (e) => {
 function drawLoop() {
   setTimeout(drawLoop, 1000 / 30);
   show();
+  if (autozoom && moving) {
+    zoomy({ clientX: mouseX, clientY: mouseY, deltaY: autozoom });
+  }
   if (!control) {
     numToAdd[0] -= (numToAdd[0] - target[0]) * 0.1;
     numToAdd[1] -= (numToAdd[1] - target[1]) * 0.1;
